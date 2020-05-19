@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <title>حساب زكاة الفطر</title>
+
+    <style>
+
+        .card {
+                margin: 0 auto; /* Added */
+                float: none; /* Added */
+                margin-bottom: 10px; /* Added */
+        }
+        .card:first-child{
+            background-color: #28a745;
+            color: #fff;
+        }
+    </style>
+  </head>
+  <body class="text-right">
+    <div class="container">
+      <h1>حساب زكاة الفطر</h1>
+      <form action="#" onsubmit="calculate();return false">
+        <div class="form-group">
+          <label for="money">المال</label>
+          <input class="form-control" type="number" name="money" id="money" />
+          <label for="money">عدد الأشخاص</label>
+          <input class="form-control" type="number" name="person" id="person" />
+          <br />
+          <button class="btn btn-primary">حساب</button>
+        </div>
+      </form>
+      <div id="output" class="text-center"></div>
+    </div>
+
+    <script>
+      let zakat = [
+        {
+          name: "الزبيب",
+          weight: 1640,
+          price: 1640,
+        },
+        {
+          name: "الحمص",
+          weight: 2000,
+          price: 560,
+        },
+        {
+          name: "اللوبيا",
+          weight: 2060,
+          price: 535.6,
+        },
+        {
+          name: "العدس",
+          weight: 2100,
+          price: 335,
+        },
+        {
+          name: "الكسكس",
+          weight: 1800,
+          price: 252,
+        },
+        {
+          name: "الأرز",
+          weight: 2300,
+          price: 230,
+        },
+        {
+          name: "المحمصة",
+          weight: 2000,
+          price: 200,
+        },
+        {
+          name: "الدقيف",
+          weight: 2000,
+          price: 160,
+        },
+        {
+          name: "الفرينة",
+          weight: 1400,
+          price: 70,
+        },
+      ];
+      let output = document.getElementById("output");
+    </script>
+    <script>
+      var calculate = () => {
+        output.innerHTML = ""
+        let money = parseInt(document.getElementById("money").value);
+        let persons = parseInt(document.getElementById("person").value);
+        let zakatList = zakat
+          .map((e) => ({
+            ...e,
+            ratio: Math.floor(money / e.price),
+          }))
+          .map((e) => ({
+            ...e,
+            rest: money - persons * e.price,
+          }))
+          .filter((e) => e.ratio > persons)
+          .sort((e) => e.ratio);
+        zakatList.forEach((element) => {
+          output.innerHTML += `
+                <div class="card text-center" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">${element.name}</h5>
+                    <p class="card-text"> ثمن الزكاة ${
+                      element.price * persons
+                    }</p>
+                    <p class="card-text"> يتبقى من المال ${element.rest}</p>
+                    
+                </div>
+                </div>
+                `;
+        });
+        console.log(zakatList);
+      };
+    </script>
+    <!-- <script>
+      let zakat = [
+        {
+          name: "الزبيب",
+          weight: 1640,
+          price: 1640,
+        },
+        {
+          name: "الحمص",
+          weight: 2000,
+          price: 560,
+        },
+        {
+          name: "اللوبيا",
+          weight: 2060,
+          price: 535.6,
+        },
+        {
+          name: "العدس",
+          weight: 2100,
+          price: 335,
+        },
+        {
+          name: "الكسكس",
+          weight: 1800,
+          price: 252,
+        },
+        {
+          name: "الأرز",
+          weight: 2300,
+          price: 230,
+        },
+        {
+          name: "المحمصة",
+          weight: 2000,
+          price: 200,
+        },
+        {
+          name: "الدقيف",
+          weight: 2000,
+          price: 160,
+        },
+        {
+          name: "الفرينة",
+          weight: 1400,
+          price: 70,
+        },
+      ];
+
+      let output = document.getElementById("output");
+      let restMin = 0;
+      function calculate() {
+        output.innerHTML = "";
+        let money = parseInt(document.getElementById("money").value);
+        restMin = money;
+        let persons = parseInt(document.getElementById("person").value);
+
+        zakat.forEach((element) => {
+          let ratio = money / element.price;
+          let needed = (persons - ratio) * element.price;
+
+          console.log(element.name, ratio);
+          if (ratio >= persons) {
+            let rest = (ratio - persons) * element.price;
+            restMin = Math.min(restMin, rest);
+            console.log(
+              "zakat " + element.name + " = " + persons * element.price
+            );
+            console.log("reste " + (ratio - persons) * element.price);
+
+            output.innerHTML +=
+              "zakat " +
+              element.name +
+              " = " +
+              persons * element.price +
+              "<br>";
+            output.innerHTML += "reste " + rest + "<br>";
+            output.innerHTML += "----------------------------" + "<br><br>";
+          } else {
+            console.log("You need " + (persons - ratio) * element.price);
+
+            output.innerHTML +=
+              "zakat " +
+              element.name +
+              " = " +
+              persons * element.price +
+              "<br>";
+            output.innerHTML += "You need " + needed + "<br>";
+            output.innerHTML += "----------------------------" + "<br><br>";
+          }
+
+          console.log("------------------------");
+          output.innerHTML = "";
+          zakat.forEach((element) => {
+            output.innerHTML = "";
+            let ratio = money / element.price;
+            let resting = (ratio - persons) * element.price;
+
+            if (resting == restMin) {
+              output.innerHTML +=
+                element.name + " " + element.price * persons + "<br>";
+              output.innerHTML += resting + "<br>";
+            }
+          });
+        });
+      }
+    </script> -->
+  </body>
+</html>
